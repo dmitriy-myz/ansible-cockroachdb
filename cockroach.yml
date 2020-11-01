@@ -1,0 +1,6 @@
+- hosts: cockroachdb
+  become: yes
+  roles:
+    - role: ansible-cockroachdb
+
+

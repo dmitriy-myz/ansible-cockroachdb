@@ -1,6 +1,6 @@
 - name: add csql command
   lineinfile:
-    dest: "/home/{{ cockroach_user}}/.bash_profile"
+    dest: "/home/{{ cockroach_user}}/.bashrc"
     line: "alias csql='cockroach sql --certs-dir={{ cockroach_certs_dir}} --host={{ansible_fqdn}}'"
     state: present
     backup: yes
