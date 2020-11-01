@@ -19,4 +19,4 @@ cockroach_cache_size: 4GiB
 # by default 10y for ca and 5y for nodes and clients; but why they should hardly expire?
 # we don't want them to expiry; instead will rotate it manually (or this will not our problem)
 cockroach_ca_lifetime: 878400h0m0s
-cockroach_certs_lifetime: 878400h0m0s
+cockroach_certs_lifetime: 808400h0m0s
