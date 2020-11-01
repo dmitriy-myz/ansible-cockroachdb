@@ -1,0 +1,19 @@
+---
+
+- name: create ca dir
+  file:
+    state: directory
+    path: "{{ cockroach_ca_dir }}"
+    owner: "{{ cockroach_user }}"
+    group: "{{ cockroach_group }}"
+    mode: 0700
+
+- name: create ca
+  shell: "cockroach cert create-ca --certs-dir={{ cockroach_certs_dir }}/ --ca-key={{cockroach_ca_dir}}/ca.key"
+  become_user: "{{ cockroach_user}}"
+  creates: "{{ cockroach_ca_dir}}/ca.key"
+
+- name: create node key
+  shell: "cockroach cert create-node {{ ansible_hostname }} {{ ansible_fqdn }} --certs-dir={{ cockroach_certs_dir }}/ --ca-key={{cockroach_ca_dir}}/ca.key"
+  become_user: "{{ cockroach_user}}"
+  creates: "{{ cockroach_ca_dir}}/ca.key"

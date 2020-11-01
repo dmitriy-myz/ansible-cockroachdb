@@ -4,6 +4,8 @@ cockroach_version: "20.1.8"
 cockroach_tarball_url: "https://binaries.cockroachdb.com/cockroach-v{{cockroach_version}}.linux-amd64.tgz"
 cockroach_install_path: "/usr/local/cockroach"
 cockroach_datastore: "/var/lib/cockroach"
-cockroach_certs: "/etc/cockroach"
+cockroach_configs_dir: "/etc/cockroach"
+cockroach_certs_dir: "/etc/cockroach/certs"
+cockroach_ca_dir: "/etc/cockroach/ca"
 cockroach_user: cockroach
 cockroach_group: cockroach
