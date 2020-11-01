@@ -1,3 +1,4 @@
 - include: install.yml
 - include: generate-certs.yml
 - include: init.yml
+- include: csql.yml
