@@ -25,6 +25,7 @@
     - "{{ cockroach_datastore }}"
     - "{{ cockroach_configs_dir }}"
     - "{{ cockroach_certs_dir }}"
+    - "{{ cockroach_log_dir }}"
 
 
 - name: download and untar cockroach

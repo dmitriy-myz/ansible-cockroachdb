@@ -7,5 +7,11 @@ cockroach_datastore: "/var/lib/cockroach"
 cockroach_configs_dir: "/etc/cockroach"
 cockroach_certs_dir: "/etc/cockroach/certs"
 cockroach_ca_dir: "/etc/cockroach/ca"
+cockroach_log_dir: "/var/log/cockroach"
 cockroach_user: cockroach
 cockroach_group: cockroach
+cockroach_cluster_name: cockroach
+
+cockroach_port: 26257
+cockroach_http_port: 8080
+cockroach_cache_size: 4GiB
