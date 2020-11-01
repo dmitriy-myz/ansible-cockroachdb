@@ -11,9 +11,50 @@
 - name: create ca
   shell: "cockroach cert create-ca --certs-dir={{ cockroach_certs_dir }}/ --ca-key={{cockroach_ca_dir}}/ca.key"
   become_user: "{{ cockroach_user}}"
-  creates: "{{ cockroach_ca_dir}}/ca.key"
+  args:
+    creates: "{{ cockroach_ca_dir}}/ca.key"
+  when: inventory_hostname == groups['cockroachdb'][0]
 
+- name: Gather ca key
+  slurp:
+    src: "{{ cockroach_ca_dir}}/ca.key"
+  register: cockroach_ca_key
+  run_once: True
+  when: inventory_hostname == groups['cockroachdb'][0]
+
+- name: Gather ca cert
+  slurp:
+    src: "{{ cockroach_certs_dir}}/ca.crt"
+  register: cockroach_ca_cert
+  run_once: True
+  when: inventory_hostname == groups['cockroachdb'][0]
+
+- debug:
+    msg: "{{ cockroach_ca_key['content'] | b64decode }}"
+
+- name: write ca key to other nodes
+  copy:
+    dest: "{{ cockroach_ca_dir}}/ca.key"
+    content: "{{ cockroach_ca_key['content'] | b64decode }}"
+    owner: "{{ cockroach_user }}"
+    group: "{{ cockroach_group }}"
+    mode: 0600
+  when: inventory_hostname != groups['cockroachdb'][0]
+
+- name: write ca cert to other nodes
+  copy:
+    dest: "{{ cockroach_certs_dir}}/ca.crt"
+    content: "{{ cockroach_ca_cert.content | b64decode }}"
+    owner: "{{ cockroach_user }}"
+    group: "{{ cockroach_group }}"
+    mode: 0644
+  when: inventory_hostname != groups['cockroachdb'][0]
+
+
+# copy key to other
 - name: create node key
   shell: "cockroach cert create-node {{ ansible_hostname }} {{ ansible_fqdn }} --certs-dir={{ cockroach_certs_dir }}/ --ca-key={{cockroach_ca_dir}}/ca.key"
   become_user: "{{ cockroach_user}}"
-  creates: "{{ cockroach_ca_dir}}/ca.key"
+  args:
+    creates: "{{ cockroach_ca_dir}}/ca.crt"
+
