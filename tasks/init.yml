@@ -1,7 +1,7 @@
 - name: put systemd init file
   template:
     src: cockroachdb.service.j2
-    dest: /var/lib/systemd/system/cockroach.service
+    dest: /lib/systemd/system/cockroach.service
     owner: root
     mode: 644
   register: systemd_config
@@ -13,16 +13,14 @@
     enabled: yes
   when: systemd_config.changed
 
+- name: Start cockroach
+  systemd:
+    name: cockroach.service
+    state: started
+  when: systemd_config.changed
+
 - name: init cockroach cluster
-  shell: "cockroach cert create-node {{ ansible_hostname }} {{ ansible_fqdn }} --certs-dir={{ cockroach_certs_dir }}/ --ca-key={{cockroach_ca_dir}}/ca.key"
+  shell: "cockroach init --cluster-name={{cockroach_cluster_name}} --host={{ ansible_fqdn }} --certs-dir={{ cockroach_certs_dir }}"
   become_user: "{{ cockroach_user}}"
-  args:
-    creates: "{{ cockroach_certs_dir}}/node.crt"
-
-
-#- name: Start cockroach
-#  systemd:
-#    name: cockroach.service
-#    state: started
-#  when: systemd_config.changed
-#
+  run_once: True
+  when: systemd_config.changed
