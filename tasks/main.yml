@@ -1,0 +1,40 @@
+---
+
+- name: Create Cockroach group
+  group:
+    name: "{{ cockroach_group }}"
+    state: present
+
+- name: Create Cockroach user
+  user:
+    name: "{{ cockroach_user }}"
+    shell: /usr/sbin/nologin
+    group: "{{ cockroach_group }}"
+    state: present
+
+
+- name: create dirs
+  file:
+    state: directory
+    path: "{{ item }}"
+    owner: "{{ cockroach_user }}"
+    group: "{{ cockroach_group }}"
+  with_items:
+    - "{{ cockroach_install_path }}"
+    - "{{ cockroach_datastore }}"
+    - "{{ cockroach_certs }}"
+
+- name: download and untar cockroach
+  unarchive:
+    src: "{{ cockroach_tarball_url }}"
+    dest: "{{ cockroach_install_path }}"
+    remote_src: True
+    extra_opts: "--strip-components=1"
+    creates: "{{ cockroach_install_path }}/cockroach"
+  register: cockroach_downloaded
+
+- name: create symlink to /usr/local/bin
+  file:
+    src: "{{ cockroach_install_path }}/cockroach"
+    dest: /usr/local/bin/cockroach
+    state: link
