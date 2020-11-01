@@ -1,0 +1,23 @@
+[Unit]
+Description=Cockroach cluster node
+Requires=network.target
+
+[Service]
+Type=simple
+Restart=on-failure
+RestartSec=10
+
+ExecStart={{cockroach_install_path}}/cockroach start --certs-dir={{ cockroach_certs_dir}} --cluster-name={{ cockroach_cluster_name }} --http-addr={{ansible_fqdn}}:{{ cockroach_http_port }} --listen-addr={{ansible_fqdn}}:{{cockroach_port}} --log-dir={{ cockroach_log_dir }} --store={{ cockroach_datastore }} --cache={{cockroach_cache_size}} {% for h in (groups['cockroachdb']%} --join={{h}}:{{cockroach_port}}{% endfor %}
+
+--http-port={{http_port}} --port={{cockroach_port}} --host={{ansible_fqdn}} --store={{datastore}} --log-dir={{log_dir}}
+
+ {% if cache is defined %} --cache={{ cache | default(omit)}}{%else%}{%endif%} {% if max_sql_memory is defined %}
+
+ --max-sql-memory={{ max_sql_memory | default(omit)}}{%else%}{%endif%} {% if locality is defined %}
+ --locality={{ locality | default(omit)}}{%else%}{%endif%}{% if cluster_mode|lower == 'secure' %} --certs-dir={{certs_dir}}{%else%} --insecure{%endif%}
+
+ExecStop={{cockroach_install_path}}/cockroach quit --certs-dir={{cockroach_certs_dir}}  --host={{ansible_fqdn}}
+User={{ cockroach_user }}
+Group={{ cockroach_group }}
+[Install]
+WantedBy=multi-user.target
