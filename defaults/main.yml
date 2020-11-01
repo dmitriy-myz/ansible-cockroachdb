@@ -15,3 +15,8 @@ cockroach_cluster_name: cockroach
 cockroach_port: 26257
 cockroach_http_port: 8080
 cockroach_cache_size: 4GiB
+
+# by default 10y for ca and 5y for nodes and clients; but why they should hardly expire?
+# we don't want them to expiry; instead will rotate it manually (or this will not our problem)
+cockroach_ca_lifetime: 100y
+cockroach_certs_lifetime: 99y
